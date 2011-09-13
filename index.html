@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Metronome</title>
+		<style type="text/css">
+			#flasher {
+				height: 15px;
+				width: 15px;
+				border-radius: 10px;
+				background-color: #f00;
+				display: none;
+			}
+		</style>
+		<script src="metronome.js"></script>
+	</head>
+	<body>
+		<div id="metronome"></div>
+<!--
+		<div id="controls">
+			<div id="plus"> + </div>
+			<div id="minus"> - </div>
+			<div id="startstop">Start</div>
+		</div>
+-->
+		<script>
+			var metronome = new Metronome(document.getElementById('metronome'));
+		</script>
+	</body>
+</html>
