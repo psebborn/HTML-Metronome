@@ -64,9 +64,11 @@ Metronome = function (element) {
 	};
 	
 	//Stop 'ticking'
-	this.stop = function () {
-		window.clearInterval(this.ticking);	
-		this.bar.style.webkitTransform = 'rotate(0deg)';
+	this.stop = function (restart) {
+		window.clearInterval(this.ticking);
+		if(!restart) {
+			this.bar.style.webkitTransform = 'rotate(0deg)';
+		}
 		this.swingRight = true;
 	};
 	
@@ -84,12 +86,16 @@ Metronome = function (element) {
 			self.flasher.style.display = 'none';
 			}, 100);
 	};
+	
 	//Change the tempo
 	this.setTempo = function (newTempo) {
 		this.tempo = newTempo;
 		this.tempoMS = this.bpmToMs(newTempo);
 		console.info('Tempo set at ' + this.tempo + 'bpm' + ' (' + this.tempoMS + 'ms interval)');
-		this.stop();
+		//Set transition speed
+		this.bar.style.webkitTransition = 'all '+ (this.tempoMS / 1000)  + 's ease-in-out';
+		console.info(this.bar.style.webkitTransition);
+		this.stop(true);
 		this.start();
 	};
 	
