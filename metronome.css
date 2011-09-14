@@ -1,0 +1,36 @@
+body {
+	margin: 0 auto;
+	width: 600px;
+}
+
+#flasher {
+	height: 15px;
+	width: 15px;
+	border-radius: 10px;
+	background-color: #f00;
+	display: none;
+}
+
+#metronome {
+	border: 1px solid #aaa;
+	height: 300px;
+	width: 200px;
+}
+
+#swinger {
+	background: #535353;
+	display: block;
+	height: 240px;
+	margin: 0 auto;
+	width: 10px;
+
+
+	-webkit-transition: all 0.66s ease-in-out;
+	-moz-transition: all 0.66s ease-in-out;
+	-o-transition: all 0.66s ease-in-out;
+	-ms-transition: all 0.66s ease-in-out;
+	transition: all 1s ease-in-out;
+
+	-webkit-transform-origin: 50% 100%;
+
+}

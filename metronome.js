@@ -33,6 +33,7 @@ Metronome = function (element) {
 	};
 	
 	this.init = function () {
+		this.bar =  document.getElementById('swinger');
 		this.tempo = this.config.tempo;
 		this.tempoMS = this.bpmToMs(this.config.tempo);
 		//Click sound - <audio> element - can we just dynamically change the src in the DOM?
@@ -56,6 +57,7 @@ Metronome = function (element) {
 	//Start 'ticking'
 	this.start = function () {
 		//this.soundTick();
+		this.swingRight = true;
 		this.ticking = window.setInterval(function () {
 			self.soundTick();
 		}, self.tempoMS);
@@ -64,11 +66,14 @@ Metronome = function (element) {
 	//Stop 'ticking'
 	this.stop = function () {
 		window.clearInterval(this.ticking);	
+		this.bar.style.webkitTransform = 'rotate(0deg)';
+		this.swingRight = true;
 	};
 	
 	//'Play' the 'tick'
 	this.soundTick = function () {
 		this.flash();
+		this.moveBar();
 		this.beeper.play();
 	};
 	
@@ -133,12 +138,27 @@ Metronome = function (element) {
 		if (self.running) {
 			self.stop();
 		} else {
+		self.bar.style.webkitTransform = 'rotate(-45deg)';
 			self.start();
 		}
 	
 		self.running = !self.running;
 	};
+
 	
+	this.moveBar = function () {
+		var tf = this.bar.style.webkitTransform,
+			angle;
+		console.log(tf);
+		if (this.swingBar) {
+			angle = '-45';
+		} else {
+			angle = '45';
+		}
+		this.bar.style.webkitTransform = 'rotate('+ angle + 'deg)';
+		this.swingBar = !this.swingBar;
+	};
+
 	this.init();
 
 };
