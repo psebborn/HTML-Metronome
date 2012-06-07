@@ -48,8 +48,8 @@ Metronome = function (element) {
 		this.flasher.id = 'flasher';
 
 		
-		this.addControls();
 		document.body.appendChild(this.flasher);
+		this.addControls();
 		
 		this.setupAudio();
 
@@ -108,7 +108,7 @@ Metronome = function (element) {
 	this.stop = function (restart) {
 		window.clearInterval(this.ticking);
 		if(!restart) {
-			this.bar.style.webkitTransform = 'rotate(0deg)';
+			this.bar.style.webkitTransform = 'rotate(0deg) translateY(20px)';
 		}
 		this.swingRight = true;
 	};
@@ -122,9 +122,9 @@ Metronome = function (element) {
 	
 	//Flash the 'light'
 	this.flash = function() {
-		this.flasher.style.display = 'block';
+		this.flasher.style.visibility = 'visible';
 		setTimeout(function() {
-			self.flasher.style.display = 'none';
+			self.flasher.style.visibility = 'hidden';
 			}, 100);
 	};
 
@@ -185,7 +185,7 @@ Metronome = function (element) {
 		if (self.running) {
 			self.stop();
 		} else {
-			self.bar.style.webkitTransform = 'rotate(-45deg)';
+			self.bar.style.webkitTransform = 'rotate(-45deg) translateY(20px)';
 			self.start();
 		}
 	
@@ -196,13 +196,13 @@ Metronome = function (element) {
 		var tf = this.bar.style.webkitTransform,
 			angle;
 		console.log(tf);
-		if (this.swingBar) {
-			angle = '-45';
-		} else {
+		if (this.swingRight) {
 			angle = '45';
+		} else {
+			angle = '-45';
 		}
-		this.bar.style.webkitTransform = 'rotate('+ angle + 'deg)';
-		this.swingBar = !this.swingBar;
+		this.bar.style.webkitTransform = 'rotate('+ angle + 'deg) translateY(20px)';
+		this.swingRight = !this.swingRight;
 	};
 
 	this.init();

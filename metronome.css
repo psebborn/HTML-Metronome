@@ -1,6 +1,6 @@
 body {
-	margin: 0 auto;
-	width: 600px;
+	font: 80%/1.2 Helvetica, Arial, sans-serif;
+	margin: 0;
 }
 
 #flasher {
@@ -8,13 +8,17 @@ body {
 	width: 15px;
 	border-radius: 10px;
 	background-color: #f00;
-	display: none;
+	visibility: hidden;
+	margin: 10px auto;
 }
 
 #metronome {
 	border: 1px solid #aaa;
-	height: 300px;
-	width: 200px;
+	border-color: #fff #fff #aaa #fff;
+	border-width: 0 100px 300px 100px;
+	height: 5px;
+	margin: 30px auto 0;
+	width: 40px;
 }
 
 #swinger {
@@ -24,13 +28,51 @@ body {
 	margin: 0 auto;
 	width: 10px;
 
-
 	-webkit-transition: all 0.66s ease-in-out;
 	-moz-transition: all 0.66s ease-in-out;
 	-o-transition: all 0.66s ease-in-out;
 	-ms-transition: all 0.66s ease-in-out;
 	transition: all 1s ease-in-out;
 
+	-webkit-transform: translateY(20px);
 	-webkit-transform-origin: 50% 100%;
 
 }
+
+
+#controls {
+	margin:0 auto;
+	padding-top: 30px;
+	width: 240px;
+}
+
+#plus,
+#minus {
+	background: #E5E5E5;
+	border-radius: 10px;
+	cursor: pointer;
+	float: left;
+	font-size: 2em;
+	height: 40px;
+	text-align: center;
+	margin: 10px;
+	width: 40px;
+}
+
+#plus {
+	float: right;
+}
+
+#startStop {
+	background-color: #22f;
+	border-radius: 10px;
+	color: #fff;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 1.8em;
+	height: 20px;
+	margin: 10px;
+	text-align: center;
+	padding: 7px 0 13px;
+	width: 100px;
+} 
