@@ -6,7 +6,9 @@
 var Metronome = Metronome || {};
 
 Metronome = function (element) {
-	var self = this;
+	var self = this,
+		buff = null,
+		context;
 
 	this.running = false;
 	//Default config options go in here
@@ -36,11 +38,10 @@ Metronome = function (element) {
 		this.bar =  document.getElementById('swinger');
 		this.tempo = this.config.tempo;
 		this.tempoMS = this.bpmToMs(this.config.tempo);
-		//Click sound - <audio> element - can we just dynamically change the src in the DOM?
-		this.sound = this.config.clickSound;
 		//Create the <audio> element to play the beep
 		this.beeper = document.createElement('div');
-		this.beeper.innerHTML = '<audio style="display: none;" controls preload="auto" ><source src="' + this.sound + '" /><source src="beep.wav"></source></audio>'
+		this.beeper.innerHTML = '<audio style="display: none;" controls preload="auto" ><source src="' + this.config.clickSound + '" /><source src="beep.wav"></source></audio>';
+		
 		
 		//Create the 'flasher'
 		this.flasher = document.createElement('div');
@@ -48,12 +49,52 @@ Metronome = function (element) {
 
 		
 		this.addControls();
-		document.body.appendChild(this.beeper);
 		document.body.appendChild(this.flasher);
-		this.beeper = this.beeper.getElementsByTagName('audio')[0];
 		
+		this.setupAudio();
+
 	};
 	
+	this.setupAudio = function() {
+		var request;
+
+		try{
+			context = new webkitAudioContext();
+		} catch(e) {
+			console.log("Web Audio API needs Webkit, possibly Chrome, to work");
+			/* Fall back to an <audio element maybe????
+
+			//Click sound - <audio> element - can we just dynamically change the src in the DOM?
+			this.sound = this.config.clickSound;
+			//Create the <audio> element to play the beep
+			this.beeper = document.createElement('div');
+			this.beeper.innerHTML = '<audio style="display: none;" controls preload="auto" ><source src="' + this.sound + '" /><source src="beep.wav"></source></audio>'
+			this.beeper = this.beeper.getElementsByTagName('audio')[0];
+			document.body.appendChild(this.beeper);
+			*/
+		}
+
+
+		request = new XMLHttpRequest();
+		request.open('GET', this.config.clickSound, true);
+		request.responseType = 'arraybuffer';
+		request.onload = function() {
+			context.decodeAudioData(request.response, function(buffer) {
+		    	buff = buffer;
+		    });
+		  }
+		  request.send();
+
+	};
+
+	this.playSound = function(buffer) {
+	  var source = context.createBufferSource(); // creates a sound source
+	  source.buffer = buffer;                    // tell the source which sound to play
+	  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+	  source.noteOn(0);                          // play the source now
+	//	this.beeper.play();
+	};
+
 	//Start 'ticking'
 	this.start = function () {
 		//this.soundTick();
@@ -74,9 +115,9 @@ Metronome = function (element) {
 	
 	//'Play' the 'tick'
 	this.soundTick = function () {
-		this.flash();
 		this.moveBar();
-		this.beeper.play();
+		this.flash();
+		this.playSound(buff);
 	};
 	
 	//Flash the 'light'
@@ -86,7 +127,7 @@ Metronome = function (element) {
 			self.flasher.style.display = 'none';
 			}, 100);
 	};
-	
+
 	//Change the tempo
 	this.setTempo = function (newTempo) {
 		this.tempo = newTempo;
@@ -144,13 +185,12 @@ Metronome = function (element) {
 		if (self.running) {
 			self.stop();
 		} else {
-		self.bar.style.webkitTransform = 'rotate(-45deg)';
+			self.bar.style.webkitTransform = 'rotate(-45deg)';
 			self.start();
 		}
 	
 		self.running = !self.running;
 	};
-
 	
 	this.moveBar = function () {
 		var tf = this.bar.style.webkitTransform,
