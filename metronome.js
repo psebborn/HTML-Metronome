@@ -10,7 +10,6 @@ Metronome = function (element) {
 		buff = null,
 		context;
 
-	this.running = false;
 	//Default config options go in here
 	this.config = {
 		tempo : 90,
@@ -30,7 +29,7 @@ Metronome = function (element) {
 	this.msToBpm = function (ms) {
 		var bpm;
 		if (parseInt(bpm, 10) >= 0) {
-			bpm = parseInt(ms * 6000)
+			bpm = parseInt(ms * 6000, 10);
 		}
 	};
 	
@@ -46,6 +45,9 @@ Metronome = function (element) {
 		//Create the 'flasher'
 		this.flasher = document.createElement('div');
 		this.flasher.id = 'flasher';
+
+		//Create tempo text
+		this.tempoText = this.createTempoText();
 
 		
 		document.body.appendChild(this.flasher);
@@ -80,19 +82,19 @@ Metronome = function (element) {
 		request.responseType = 'arraybuffer';
 		request.onload = function() {
 			context.decodeAudioData(request.response, function(buffer) {
-		    	buff = buffer;
-		    });
-		  }
-		  request.send();
+				buff = buffer;
+			});
+		};
+		request.send();
 
 	};
 
 	this.playSound = function(buffer) {
-	  var source = context.createBufferSource(); // creates a sound source
-	  source.buffer = buffer;                    // tell the source which sound to play
-	  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-	  source.noteOn(0);                          // play the source now
-	//	this.beeper.play();
+		var source = context.createBufferSource(); // creates a sound source
+		source.buffer = buffer;                    // tell the source which sound to play
+		source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+		source.noteOn(0);                          // play the source now
+		//	this.beeper.play();
 	};
 
 	//Start 'ticking'
@@ -106,7 +108,7 @@ Metronome = function (element) {
 	
 	//Stop 'ticking'
 	this.stop = function (restart) {
-		window.clearInterval(this.ticking);
+		this.ticking = window.clearInterval(this.ticking);
 		if(!restart) {
 			this.bar.style.webkitTransform = 'rotate(0deg) translateY(20px)';
 		}
@@ -128,11 +130,12 @@ Metronome = function (element) {
 			}, 100);
 	};
 
-	//Change the tempo
+	//Change the po
 	this.setTempo = function (newTempo) {
 		this.tempo = newTempo;
 		this.tempoMS = this.bpmToMs(newTempo);
 		console.info('Tempo set at ' + this.tempo + 'bpm' + ' (' + this.tempoMS + 'ms interval)');
+		this.tempoText.innerHTML = this.tempo + 'bpm';
 		//Set transition speed
 		this.bar.style.webkitTransition = 'all '+ (this.tempoMS / 1000)  + 's ease-in-out';
 		console.info(this.bar.style.webkitTransition);
@@ -165,6 +168,16 @@ Metronome = function (element) {
 		document.body.appendChild(controls);
 	};
 	
+	this.createTempoText = function() {
+		var el = document.createElement('div'),
+			text = document.createTextNode(self.tempo + 'bpm');
+
+		el.appendChild(text);
+		document.body.appendChild(el);
+
+		return el;
+	};
+
 	this.upTempo = function (e) {
 		self.setTempo(self.tempo + 10);
 		e.preventDefault();
@@ -182,14 +195,12 @@ Metronome = function (element) {
 	
 	
 	this.toggleStart = function(e) {
-		if (self.running) {
+		if (self.ticking) {
 			self.stop();
 		} else {
 			self.bar.style.webkitTransform = 'rotate(-45deg) translateY(20px)';
 			self.start();
 		}
-	
-		self.running = !self.running;
 	};
 	
 	this.moveBar = function () {
