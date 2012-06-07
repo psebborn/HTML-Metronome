@@ -171,7 +171,7 @@ Metronome = function (element) {
 	this.createTempoText = function() {
 		var el = document.createElement('div'),
 			text = document.createTextNode(self.tempo + 'bpm');
-
+		el.id = 'tempoText';
 		el.appendChild(text);
 		document.body.appendChild(el);
 
