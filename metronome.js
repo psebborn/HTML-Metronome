@@ -101,6 +101,7 @@ Metronome = function (element) {
 	this.start = function () {
 		//this.soundTick();
 		this.swingRight = true;
+		this.startStop.innerHTML = 'Stop';
 		this.ticking = window.setInterval(function () {
 			self.soundTick();
 		}, self.tempoMS);
@@ -109,6 +110,7 @@ Metronome = function (element) {
 	//Stop 'ticking'
 	this.stop = function (restart) {
 		this.ticking = window.clearInterval(this.ticking);
+		this.startStop.innerHTML = 'Start';
 		if(!restart) {
 			this.bar.style.webkitTransform = 'rotate(0deg) translateY(20px)';
 		}
@@ -165,6 +167,7 @@ Metronome = function (element) {
 		controls.appendChild(plus);
 		controls.appendChild(minus);
 		controls.appendChild(startStop);
+		self.startStop = startStop;
 		document.body.appendChild(controls);
 	};
 	
@@ -234,3 +237,11 @@ Metronome = function (element) {
 	
 	
 	
+
+
+//TODO: Catch non-webkit and fall back to HTML5 audio?
+//TODO: Make it look non-shite!
+//TODO: Mega tidy-up of code is needed
+//TODO: Make swinging bar a slider with the 'weight' on it, drag to change tempo
+//TODO: Type in tempo
+//TODO: Implement custom click sound
