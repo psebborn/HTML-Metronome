@@ -37,10 +37,6 @@ Metronome = function (element) {
 		this.bar =  document.getElementById('swinger');
 		this.tempo = this.config.tempo;
 		this.tempoMS = this.bpmToMs(this.config.tempo);
-		//Create the <audio> element to play the beep
-		this.beeper = document.createElement('div');
-		this.beeper.innerHTML = '<audio style="display: none;" controls preload="auto" ><source src="' + this.config.clickSound + '" /><source src="beep.wav"></source></audio>';
-		
 		
 		//Create the 'flasher'
 		this.flasher = document.createElement('div');
@@ -60,22 +56,11 @@ Metronome = function (element) {
 	this.setupAudio = function() {
 		var request;
 
+		this.supportsWebAudio = false;
+
 		try{
 			context = new webkitAudioContext();
-		} catch(e) {
-			console.log("Web Audio API needs Webkit, possibly Chrome, to work");
-			/* Fall back to an <audio element maybe????
-
-			//Click sound - <audio> element - can we just dynamically change the src in the DOM?
-			this.sound = this.config.clickSound;
-			//Create the <audio> element to play the beep
-			this.beeper = document.createElement('div');
-			this.beeper.innerHTML = '<audio style="display: none;" controls preload="auto" ><source src="' + this.sound + '" /><source src="beep.wav"></source></audio>'
-			this.beeper = this.beeper.getElementsByTagName('audio')[0];
-			document.body.appendChild(this.beeper);
-			*/
-		}
-
+			this.supportsWebAudio = true;
 
 		request = new XMLHttpRequest();
 		request.open('GET', this.config.clickSound, true);
@@ -87,14 +72,40 @@ Metronome = function (element) {
 		};
 		request.send();
 
+		} catch(e) {
+			console.info("Web Audio API needs Webkit, possibly Chrome, to work");
+			/* Fall back to an <audio> element - May need another fallback for non-HTML5 browsers (Flash?) */
+			
+
+			//Create the <audio> element to play the beep
+			this.beeper = document.createElement('div');
+			this.beeper.innerHTML = '<audio style="display: none;" controls preload="auto" ><!--source src="' + this.config.clickSound + '" /--><source src="beep.wav"></source></audio>';
+		
+		
+		
+			//Click sound - <audio> element - can we just dynamically change the src in the DOM?
+			this.sound = this.config.clickSound;
+			//Create the <audio> element to play the beep
+			this.beeper = document.createElement('div');
+			this.beeper.innerHTML = '<audio style="display: none;" controls preload="auto" ><!--source src="' + this.sound + '" /--><source src="beep.wav"></source></audio>'
+			this.beeper = this.beeper.getElementsByTagName('audio')[0];
+			document.body.appendChild(this.beeper);
+			
+		}
+
+		console.log(this.supportsWebAudio);
+
 	};
 
 	this.playSound = function(buffer) {
-		var source = context.createBufferSource(); // creates a sound source
-		source.buffer = buffer;                    // tell the source which sound to play
-		source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-		source.noteOn(0);                          // play the source now
-		//	this.beeper.play();
+		if(this.supportsWebAudio) {
+			var source = context.createBufferSource(); // creates a sound source
+			source.buffer = buffer;                    // tell the source which sound to play
+			source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+			source.noteOn(0);                          // play the source now
+		} else {
+			this.beeper.play();
+		}
 	};
 
 	//Start 'ticking'
